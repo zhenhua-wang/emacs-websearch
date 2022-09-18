@@ -35,6 +35,7 @@
           emacs-websearch-suggest
           :type "GET"
           :params (list
+                   (cons "client" "firefox")
                    (cons "q" input))
           :parser 'json-read
           :sync t
