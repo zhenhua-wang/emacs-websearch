@@ -45,8 +45,10 @@
 
 (defun emacs-websearch (result)
   (interactive
-   (list (completing-read (format "Search on %s: " emacs-websearch-engine)
-                          (completion-table-dynamic #'emacs-websearch-builder))))
+   (list (completing-read (format-prompt (format "Search on %s" emacs-websearch-engine)
+                                         (thing-at-point 'symbol))
+                          (completion-table-dynamic #'emacs-websearch-builder)
+                          nil nil nil nil (thing-at-point 'symbol))))
   (browse-url (format emacs-websearch-link result)))
 
 (provide 'emacs-websearch)
