@@ -5,6 +5,8 @@ This is a simple package which let you search anything on web using emacs. It ca
 
 The default brower can be changed by modifying `browse-url-browser-function`, e.g. `(setq browse-url-browser-function 'xwidget-webkit-browse-url)`
 
+When there is no mark set, the default search term is set to `thing-at-point`. When envoked on an active region, the default serach term is set to the region's content.
+
 ## install
 
 This package depends on request.el
