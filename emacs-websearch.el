@@ -26,7 +26,7 @@
 
 (defun emacs-websearch-parse-suggests (suggests)
   (pcase 'emacs-websearch-engine
-    (google (mapcar #'identity (aref data 1)))))
+    (google (mapcar #'identity (aref suggests 1)))))
 
 (defun emacs-websearch-builder (input &rest pred type)
   (if (not (string-empty-p input))
