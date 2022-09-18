@@ -43,12 +43,17 @@
                       (setq result (emacs-websearch-parse-suggests data)))))
         result)))
 
+(defun emacs-websearch-default-term ()
+  (if (use-region-p)
+      (buffer-substring (region-beginning) (region-end))
+    (thing-at-point 'symbol)))
+
 (defun emacs-websearch (result)
   (interactive
    (list (completing-read (format-prompt (format "Search on %s" emacs-websearch-engine)
-                                         (thing-at-point 'symbol))
+                                         (emacs-websearch-default-term))
                           (completion-table-dynamic #'emacs-websearch-builder)
-                          nil nil nil nil (thing-at-point 'symbol))))
+                          nil nil nil nil (emacs-websearch-default-term))))
   (browse-url (format emacs-websearch-link result)))
 
 (provide 'emacs-websearch)
