@@ -3,7 +3,6 @@
 
 
 (require 'cl-lib)
-(require 'dom)
 (require 'json)
 (require 'browse-url)
 (require 'request)
