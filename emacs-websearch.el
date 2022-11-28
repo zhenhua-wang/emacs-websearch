@@ -45,8 +45,8 @@
 
 (defun emacs-websearch-default-term ()
   (if (use-region-p)
-      (buffer-substring (region-beginning) (region-end))
-    (thing-at-point 'symbol)))
+      (buffer-substring-no-properties (region-beginning) (region-end))
+    (thing-at-point 'symbol t)))
 
 (defun emacs-websearch (result)
   (interactive
