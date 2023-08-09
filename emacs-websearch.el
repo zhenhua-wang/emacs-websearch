@@ -1,6 +1,6 @@
 ;;; emacs-websearch.el --- emacs websearch  -*- lexical-binding: t; -*-
 
-
+;; Package-Requires: (request)
 
 (require 'cl-lib)
 (require 'json)
