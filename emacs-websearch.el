@@ -28,20 +28,20 @@
     (google (mapcar #'identity (aref suggests 1)))))
 
 (defun emacs-websearch-builder (input &rest pred type)
-  (if (not (string-empty-p input))
-      (let ((result))
-        (request
-          emacs-websearch-suggest
-          :type "GET"
-          :params (list
-                   (cons "client" "firefox")
-                   (cons "q" input))
-          :parser 'json-read
-          :sync t
-          :success (cl-function
-                    (lambda (&key data &allow-other-keys)
-                      (setq result (emacs-websearch-parse-suggests data)))))
-        result)))
+  (when (not (string-empty-p input))
+    (let ((result))
+      (request
+        emacs-websearch-suggest
+        :type "GET"
+        :params (list
+                 (cons "client" "firefox")
+                 (cons "q" input))
+        :parser 'json-read
+        :sync t
+        :success (cl-function
+                  (lambda (&key data &allow-other-keys)
+                    (setq result (emacs-websearch-parse-suggests data)))))
+      result)))
 
 (defun emacs-websearch-default-term ()
   (if (use-region-p)
