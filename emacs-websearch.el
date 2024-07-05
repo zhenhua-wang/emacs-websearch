@@ -29,6 +29,10 @@
 
 (defvar emacs-websearch--result nil)
 
+(defun emacs-websearch-async-available-p ()
+  (and emacs-websearch-async
+       (featurep 'consult)))
+
 (defun emacs-websearch-parse-suggests (suggests)
   (pcase 'emacs-websearch-engine
     (google (mapcar #'identity (aref suggests 1)))))
@@ -41,7 +45,7 @@
       :params (list
                (cons "client" "firefox")
                (cons "q" input))
-      :sync (if emacs-websearch-async nil t)
+      :sync (if (emacs-websearch-async-available-p) nil t)
       :parser 'json-read
       :success (cl-function
                 (lambda (&key data &allow-other-keys)
@@ -57,7 +61,7 @@
 (defun emacs-websearch ()
   (interactive)
   (setq emacs-websearch--result nil)
-  (let* ((update-timer (when emacs-websearch-async
+  (let* ((update-timer (when (emacs-websearch-async-available-p)
                          (run-with-timer
                           0.3 0.3
                           (lambda ()
