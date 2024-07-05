@@ -25,6 +25,8 @@ This package depends on request.el
   :bind (("C-c l" . emacs-websearch)))
 ```
 
+Asynchronously search is available for Consult/Vertico users. To use this, `(setq emacs-websearch-async t)`
+
 ## example
 
 ![example](img/example.png)
