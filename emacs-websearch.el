@@ -17,44 +17,60 @@
           (const google))
   :group 'emacs-websearch)
 
+(defcustom emacs-websearch-async nil
+  "Non-nil means searching asynchronously. Currently, this option is only for consult/vertico."
+  :group 'emacs-websearch)
+
 (defvar emacs-websearch-suggest (pcase emacs-websearch-engine
                                   ('google "http://suggestqueries.google.com/complete/search")))
 
 (defvar emacs-websearch-link (pcase emacs-websearch-engine
                                ('google "https://www.google.com/search?q=%s")))
 
+(defvar emacs-websearch--result nil)
+
 (defun emacs-websearch-parse-suggests (suggests)
   (pcase 'emacs-websearch-engine
     (google (mapcar #'identity (aref suggests 1)))))
 
-(defun emacs-websearch-builder (input &rest pred type)
+(defun emacs-websearch-builder (input)
   (when (not (string-empty-p input))
-    (let ((result))
-      (request
-        emacs-websearch-suggest
-        :type "GET"
-        :params (list
-                 (cons "client" "firefox")
-                 (cons "q" input))
-        :parser 'json-read
-        :sync t
-        :success (cl-function
-                  (lambda (&key data &allow-other-keys)
-                    (setq result (emacs-websearch-parse-suggests data)))))
-      result)))
+    (request
+      emacs-websearch-suggest
+      :type "GET"
+      :params (list
+               (cons "client" "firefox")
+               (cons "q" input))
+      :sync (if emacs-websearch-async nil t)
+      :parser 'json-read
+      :success (cl-function
+                (lambda (&key data &allow-other-keys)
+                  (setq emacs-websearch--result
+                        (emacs-websearch-parse-suggests data)))))
+    emacs-websearch--result))
 
 (defun emacs-websearch-default-term ()
   (if (use-region-p)
       (buffer-substring-no-properties (region-beginning) (region-end))
     (thing-at-point 'symbol t)))
 
-(defun emacs-websearch (result)
-  (interactive
-   (list (completing-read (format-prompt (format "Search on %s" emacs-websearch-engine)
-                                         (emacs-websearch-default-term))
-                          (completion-table-dynamic #'emacs-websearch-builder)
-                          nil nil nil nil (emacs-websearch-default-term))))
-  (browse-url (format emacs-websearch-link result)))
+(defun emacs-websearch ()
+  (interactive)
+  (setq emacs-websearch--result nil)
+  (let* ((update-timer (when emacs-websearch-async
+                         (run-with-timer
+                          0.3 0.3
+                          (lambda ()
+                            (emacs-websearch-builder (minibuffer-contents))
+                            (consult--vertico-refresh)))))
+         (result (unwind-protect
+                     (completing-read
+                      (format-prompt (format "Search on %s" emacs-websearch-engine)
+                                     (emacs-websearch-default-term))
+                      (completion-table-dynamic #'emacs-websearch-builder)
+                      nil nil nil nil (emacs-websearch-default-term))
+                   (when update-timer (cancel-timer update-timer)))))
+    (browse-url (format emacs-websearch-link result))))
 
 (provide 'emacs-websearch)
 
