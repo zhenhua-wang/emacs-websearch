@@ -17,7 +17,7 @@
           (const google))
   :group 'emacs-websearch)
 
-(defcustom emacs-websearch-async nil
+(defcustom emacs-websearch-async t
   "Non-nil means searching asynchronously. Currently, this option is only for consult/vertico."
   :group 'emacs-websearch)
 
