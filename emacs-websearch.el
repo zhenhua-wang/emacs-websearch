@@ -31,9 +31,7 @@
 
 (defun emacs-websearch-async-available-p ()
   (and emacs-websearch-async
-       (featurep 'consult)
-       (featurep 'vertico)
-       vertico-mode))
+       (functionp 'consult--vertico-refresh)))
 
 (defun emacs-websearch-parse-suggests (suggests)
   (pcase 'emacs-websearch-engine
