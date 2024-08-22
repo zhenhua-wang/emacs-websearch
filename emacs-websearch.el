@@ -31,7 +31,7 @@
 
 (defun emacs-websearch-async-available-p ()
   (and emacs-websearch-async
-       (functionp 'consult--vertico-refresh)))
+       (functionp 'vertico--exhibit)))
 
 (defun emacs-websearch-parse-suggests (suggests)
   (pcase 'emacs-websearch-engine
@@ -66,7 +66,9 @@
                           0.3 0.3
                           (lambda ()
                             (emacs-websearch-builder (minibuffer-contents))
-                            (consult--vertico-refresh)))))
+                            (when vertico--input
+                              (setq vertico--input t)
+                              (vertico--exhibit))))))
          (result (unwind-protect
                      (completing-read
                       (format-prompt (format "Search on %s" emacs-websearch-engine)
