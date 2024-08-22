@@ -31,6 +31,7 @@
 
 (defun emacs-websearch-async-available-p ()
   (and emacs-websearch-async
+       (boundp 'vertico--input)
        (functionp 'vertico--exhibit)))
 
 (defun emacs-websearch-parse-suggests (suggests)
