@@ -83,7 +83,8 @@
 (defun emacs-websearch ()
   (interactive)
   (setq emacs-websearch--result nil)
-  (let* ((search-timer (emacs-websearch-async-update-timer))
+  (let* ((completion-ignore-case t)
+         (search-timer (emacs-websearch-async-update-timer))
          (result (unwind-protect
                      (completing-read
                       (format-prompt (format "Search on %s" emacs-websearch-engine)
