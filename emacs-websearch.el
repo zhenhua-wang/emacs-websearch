@@ -27,12 +27,28 @@
 (defvar emacs-websearch-link (pcase emacs-websearch-engine
                                ('google "https://www.google.com/search?q=%s")))
 
+(defvar emacs-websearch--minibuffer-content nil)
+
 (defvar emacs-websearch--result nil)
 
 (defun emacs-websearch-async-available-p ()
   (and emacs-websearch-async
        (boundp 'vertico--input)
        (functionp 'vertico--exhibit)))
+
+(defun emacs-websearch-async-update-timer ()
+  (when (emacs-websearch-async-available-p)
+    (run-with-timer
+     0.3 0.3
+     (lambda ()
+       (let ((current-minibuffer-contents (substring-no-properties (minibuffer-contents))))
+         (unless (string= current-minibuffer-contents
+                          emacs-websearch--minibuffer-content)
+           (setq emacs-websearch--minibuffer-content current-minibuffer-contents)
+           (emacs-websearch-builder current-minibuffer-contents)
+           (when vertico--input
+             (setq vertico--input t)
+             (vertico--exhibit))))))))
 
 (defun emacs-websearch-parse-suggests (suggests)
   (pcase 'emacs-websearch-engine
@@ -62,21 +78,16 @@
 (defun emacs-websearch ()
   (interactive)
   (setq emacs-websearch--result nil)
-  (let* ((update-timer (when (emacs-websearch-async-available-p)
-                         (run-with-timer
-                          0.3 0.3
-                          (lambda ()
-                            (emacs-websearch-builder (minibuffer-contents))
-                            (when vertico--input
-                              (setq vertico--input t)
-                              (vertico--exhibit))))))
+  (let* ((search-timer (emacs-websearch-async-update-timer))
          (result (unwind-protect
                      (completing-read
                       (format-prompt (format "Search on %s" emacs-websearch-engine)
                                      (emacs-websearch-default-term))
                       (completion-table-dynamic #'emacs-websearch-builder)
                       nil nil nil nil (emacs-websearch-default-term))
-                   (when update-timer (cancel-timer update-timer)))))
+                   ;; reset
+                   (when search-timer (cancel-timer search-timer))
+                   (setq emacs-websearch--minibuffer-content nil))))
     (browse-url (format emacs-websearch-link result))))
 
 (provide 'emacs-websearch)
