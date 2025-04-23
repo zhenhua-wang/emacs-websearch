@@ -27,6 +27,8 @@
 (defvar emacs-websearch-link (pcase emacs-websearch-engine
                                ('google "https://www.google.com/search?q=%s")))
 
+(defvar emacs-websearch--async-stop-p nil)
+
 (defvar emacs-websearch--minibuffer-content nil)
 
 (defvar emacs-websearch--result nil)
@@ -41,14 +43,17 @@
     (run-with-timer
      0.3 0.3
      (lambda ()
-       (let ((current-minibuffer-contents (substring-no-properties (minibuffer-contents))))
-         (unless (string= current-minibuffer-contents
-                          emacs-websearch--minibuffer-content)
-           (setq emacs-websearch--minibuffer-content current-minibuffer-contents)
+       (let* ((current-minibuffer-contents (substring-no-properties (minibuffer-contents)))
+              (same-contents-p (string= current-minibuffer-contents
+                                        emacs-websearch--minibuffer-content)))
+         (when (and (length> current-minibuffer-contents 0)
+                    (not (and same-contents-p emacs-websearch--async-stop-p)))
            (emacs-websearch-builder current-minibuffer-contents)
            (when vertico--input
              (setq vertico--input t)
-             (vertico--exhibit))))))))
+             (vertico--exhibit))
+           (setq emacs-websearch--async-stop-p (if same-contents-p t nil)
+                 emacs-websearch--minibuffer-content current-minibuffer-contents)))))))
 
 (defun emacs-websearch-parse-suggests (suggests)
   (pcase 'emacs-websearch-engine
