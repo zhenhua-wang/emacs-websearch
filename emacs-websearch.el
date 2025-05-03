@@ -53,7 +53,7 @@
                                         emacs-websearch--minibuffer-content)))
          (when (and (length> current-minibuffer-contents 0)
                     (not (and same-contents-p emacs-websearch--async-stop-p)))
-           (emacs-websearch-builder current-minibuffer-contents)
+           ;; update display
            (when vertico--input
              (setq vertico--input t)
              (vertico--exhibit))
