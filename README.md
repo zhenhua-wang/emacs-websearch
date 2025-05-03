@@ -26,4 +26,6 @@ When there is no mark set, the default search term is set to `thing-at-point`. W
 
 ## Example
 
-![example](img/example.png)
+![example](example/example.png)
+
+![example_eaf](example/example_eaf.gif)
