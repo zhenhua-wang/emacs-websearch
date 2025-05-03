@@ -66,7 +66,7 @@
     ('duckduckgo (mapcar #'cdar suggests))))
 
 (defun emacs-websearch-builder (input)
-  (when (not (string-empty-p input))
+  (unless (string-empty-p input)
     (request
       (emacs-websearch-suggest)
       :type "GET"
