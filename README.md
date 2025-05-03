@@ -10,7 +10,7 @@ The default brower can be changed by modifying `browse-url-browser-function`, e.
 
 When there is no mark set, the default search term is set to `thing-at-point`. When envoked on an active region, the default serach term is set to the region's content.
 
-## install
+## Installation
 
 ```
 (use-package emacs-websearch
@@ -18,12 +18,12 @@ When there is no mark set, the default search term is set to `thing-at-point`. W
   :bind (("C-c l" . emacs-websearch)))
 ```
 
-Asynchronously search is available for Consult/Vertico users. To use this, `(setq emacs-websearch-async t)`
+## Configuration
 
-Currently, DuckDuckGo and Google are supported, and the default search engine is DuckDuckGo. This can be changed by `(setq emacs-websearch-engine 'google)`
+- Asynchronously search is available for Consult/Vertico users. To use this, `(setq emacs-websearch-async t)`
+- DuckDuckGo and Google are supported, and the default search engine is DuckDuckGo. This can be changed by `(setq emacs-websearch-engine 'google)`
+- *Remote* TTY users are recommended to use DuckDuckGo with `(setq browse-url-browser-function 'eww-browse-url)`
 
-*Remote* TTY users are recommended to use DuckDuckGo with `(setq browse-url-browser-function 'eww-browse-url)`
-
-## example
+## Example
 
 ![example](img/example.png)
