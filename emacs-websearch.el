@@ -87,7 +87,7 @@
     (thing-at-point 'symbol t)))
 
 (defun emacs-websearch ()
-  "Search things in web search engine."
+  "Search things on web search engine."
   (interactive)
   (setq emacs-websearch--result nil)
   (let* ((completion-ignore-case t)
