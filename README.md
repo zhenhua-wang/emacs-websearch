@@ -22,6 +22,8 @@ Asynchronously search is available for Consult/Vertico users. To use this, `(set
 
 Currently, DuckDuckGo and Google are supported, and the default search engine is DuckDuckGo. This can be changed by `(setq emacs-websearch-engine 'google)`
 
+*Remote* TTY users are recommended to use DuckDuckGo with `(setq browse-url-browser-function 'eww-browse-url)`
+
 ## example
 
 ![example](img/example.png)
