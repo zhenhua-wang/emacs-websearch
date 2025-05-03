@@ -20,6 +20,8 @@ When there is no mark set, the default search term is set to `thing-at-point`. W
 
 Asynchronously search is available for Consult/Vertico users. To use this, `(setq emacs-websearch-async t)`
 
+Currently, DuckDuckGo and Google are supported, and the default search engine is DuckDuckGo. This can be changed by `(setq emacs-websearch-engine 'google)`
+
 ## example
 
 ![example](img/example.png)
