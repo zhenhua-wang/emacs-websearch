@@ -65,7 +65,6 @@
     ('google (mapcar #'identity (aref suggests 1)))
     ('duckduckgo (mapcar #'cdar suggests))))
 
-(defvar emacs-websearch--data nil)
 (defun emacs-websearch-builder (input)
   (when (not (string-empty-p input))
     (request
@@ -79,8 +78,7 @@
       :success (cl-function
                 (lambda (&key data &allow-other-keys)
                   (setq emacs-websearch--result
-                        (emacs-websearch-parse-suggests data))
-                  (setq emacs-websearch--data data))))
+                        (emacs-websearch-parse-suggests data)))))
     emacs-websearch--result))
 
 (defun emacs-websearch-default-term ()
