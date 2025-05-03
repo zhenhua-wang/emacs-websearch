@@ -11,21 +11,26 @@
   "emacs-websearch"
   :group 'convenience)
 
-(defcustom emacs-websearch-engine 'google
+(defcustom emacs-websearch-engine 'duckduckgo
   "search engine for emacs-websearch"
   :type '(choice
-          (const google))
+          (const google)
+          (const duckduckgo))
   :group 'emacs-websearch)
 
 (defcustom emacs-websearch-async t
   "Non-nil means searching asynchronously. Currently, this option is only for consult/vertico."
   :group 'emacs-websearch)
 
-(defvar emacs-websearch-suggest (pcase emacs-websearch-engine
-                                  ('google "http://suggestqueries.google.com/complete/search")))
+(defun emacs-websearch-suggest ()
+  (pcase emacs-websearch-engine
+    ('google "http://suggestqueries.google.com/complete/search")
+    ('duckduckgo "https://duckduckgo.com/ac/")))
 
-(defvar emacs-websearch-link (pcase emacs-websearch-engine
-                               ('google "https://www.google.com/search?q=%s")))
+(defun emacs-websearch-link ()
+  (pcase emacs-websearch-engine
+    ('google "https://www.google.com/search?q=%s")
+    ('duckduckgo "https://duckduckgo.com/?t=h_&q=%s&ia=web")))
 
 (defvar emacs-websearch--async-stop-p nil)
 
@@ -56,13 +61,15 @@
                  emacs-websearch--minibuffer-content current-minibuffer-contents)))))))
 
 (defun emacs-websearch-parse-suggests (suggests)
-  (pcase 'emacs-websearch-engine
-    (google (mapcar #'identity (aref suggests 1)))))
+  (pcase emacs-websearch-engine
+    ('google (mapcar #'identity (aref suggests 1)))
+    ('duckduckgo (mapcar #'cdar suggests))))
 
+(defvar emacs-websearch--data nil)
 (defun emacs-websearch-builder (input)
   (when (not (string-empty-p input))
     (request
-      emacs-websearch-suggest
+      (emacs-websearch-suggest)
       :type "GET"
       :params (list
                (cons "client" "firefox")
@@ -72,7 +79,8 @@
       :success (cl-function
                 (lambda (&key data &allow-other-keys)
                   (setq emacs-websearch--result
-                        (emacs-websearch-parse-suggests data)))))
+                        (emacs-websearch-parse-suggests data))
+                  (setq emacs-websearch--data data))))
     emacs-websearch--result))
 
 (defun emacs-websearch-default-term ()
@@ -81,6 +89,7 @@
     (thing-at-point 'symbol t)))
 
 (defun emacs-websearch ()
+  "Search things in web search engine."
   (interactive)
   (setq emacs-websearch--result nil)
   (let* ((completion-ignore-case t)
@@ -94,7 +103,7 @@
                    ;; reset
                    (when search-timer (cancel-timer search-timer))
                    (setq emacs-websearch--minibuffer-content nil))))
-    (browse-url (format emacs-websearch-link result))))
+    (browse-url (format (emacs-websearch-link) result))))
 
 (provide 'emacs-websearch)
 
