@@ -12,10 +12,18 @@ When there is no mark set, the default search term is set to `thing-at-point`. W
 
 ## Installation
 
+Using `straight.el`
 ```
 (use-package emacs-websearch
   :straight '(emacs-websearch :host github :repo "zhenhua-wang/emacs-websearch")
   :bind (("C-c l" . emacs-websearch)))
+```
+
+Using `vc-use-package` in emacs 30
+```
+(use-package emacs-websearch
+  :vc (:url "https://github.com/zhenhua-wang/emacs-websearch")
+  :bind (("s-l" . emacs-websearch)))
 ```
 
 ## Configuration
